@@ -19,13 +19,31 @@
         <div class="alert alert-success">{{ messages[0] }}</div>
         {% endif %}
         {% endwith %}
+        <form method="get" class="mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label for="project_id" class="form-label mb-0">Project:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-control" id="project_id" name="project_id" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        {% for project in projects %}
+                        <option value="{{ project.id }}" {% if selected_project_id==project.id %}selected{% endif %}>{{
+                            project.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Project</th>
                     <th>Title</th>
-                    <th>Status</th>
                     <th>Created By</th>
                 </tr>
             </thead>
@@ -35,7 +53,6 @@
                     <td>{{ tc.id }}</td>
                     <td>{{ tc.project_id }}</td>
                     <td>{{ tc.title }}</td>
-                    <td>{{ tc.status_id }}</td>
                     <td>{{ tc.created_by }}</td>
                 </tr>
                 {% endfor %}

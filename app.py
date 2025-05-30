@@ -46,8 +46,13 @@ def new_project():
 
 @app.route('/testcases')
 def list_test_cases_page():
-    testcases = TestCase.query.all()
-    return render_template('testcases.html', testcases=testcases)
+    project_id = request.args.get('project_id', type=int)
+    projects = Project.query.all()
+    if project_id:
+        testcases = TestCase.query.filter_by(project_id=project_id).all()
+    else:
+        testcases = TestCase.query.all()
+    return render_template('testcases.html', testcases=testcases, projects=projects, selected_project_id=project_id)
 
 @app.route('/testcases/new', methods=['GET', 'POST'])
 def new_test_case():
