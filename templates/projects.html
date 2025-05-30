@@ -25,6 +25,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Created By</th>
+                    <th>Tests Count</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,7 @@
                     <td>{{ project.name }}</td>
                     <td>{{ project.description }}</td>
                     <td>{{ project.created_by }}</td>
+                    <td>{{ test_counts[project.id] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -29,7 +29,13 @@ def index():
 @app.route('/projects')
 def list_projects_page():
     projects = Project.query.all()
-    return render_template('projects.html', projects=projects)
+    # Získání počtu testů pro každý projekt pomocí DB funkce
+    test_counts = {}
+    with db.engine.connect() as conn:
+        for project in projects:
+            result = conn.execute(text('SELECT get_test_count_by_project(:pid) AS test_count'), {'pid': project.id})
+            test_counts[project.id] = result.scalar() or 0
+    return render_template('projects.html', projects=projects, test_counts=test_counts)
 
 @app.route('/projects/new', methods=['GET', 'POST'])
 def new_project():
