@@ -45,6 +45,8 @@
                     <th>Project</th>
                     <th>Title</th>
                     <th>Created By</th>
+                    <th>Last Result</th>
+                    <th>Last Run</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,6 +56,8 @@
                     <td>{{ tc.project_id }}</td>
                     <td>{{ tc.title }}</td>
                     <td>{{ tc.created_by }}</td>
+                    <td>{% if last_results[tc.id] %}{{ last_results[tc.id]['result'] }}{% else %}-{% endif %}</td>
+                    <td>{% if last_results[tc.id] %}{{ last_results[tc.id]['executed_at'] }}{% else %}-{% endif %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

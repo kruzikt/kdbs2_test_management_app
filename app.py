@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 import os
 from api import api
 from extensions import db, migrate
+from sqlalchemy import text
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # for flash messages
@@ -52,7 +53,24 @@ def list_test_cases_page():
         testcases = TestCase.query.filter_by(project_id=project_id).all()
     else:
         testcases = TestCase.query.all()
-    return render_template('testcases.html', testcases=testcases, projects=projects, selected_project_id=project_id)
+    # Získání posledních výsledků z pohledu v_last_test_result
+    last_results = {}
+    with db.engine.connect() as conn:
+        if project_id:
+            ids = tuple(tc.id for tc in testcases)
+            if ids:
+                placeholders = ','.join(['%s'] * len(ids))
+                sql = f'SELECT * FROM v_last_test_result WHERE test_case_id IN ({placeholders})'
+                result = conn.execute(text(sql), ids)
+            else:
+                result = []
+        else:
+            result = conn.execute(text('SELECT * FROM v_last_test_result'))
+        for row in result:
+            # SQLAlchemy row is tuple-like, not dict-like, so use index or ._mapping
+            row_map = row._mapping if hasattr(row, '_mapping') else row
+            last_results[row_map['test_case_id']] = {'result': row_map['result'], 'executed_at': row_map['executed_at']}
+    return render_template('testcases.html', testcases=testcases, projects=projects, selected_project_id=project_id, last_results=last_results)
 
 @app.route('/testcases/new', methods=['GET', 'POST'])
 def new_test_case():
