@@ -20,7 +20,7 @@
                     <th>Test Case ID</th>
                     <th>Executed By (User ID)</th>
                     <th>Executed At</th>
-                    <th>Result</th>
+                    <th>Status</th>
                     <th>Notes</th>
                 </tr>
             </thead>
@@ -31,7 +31,7 @@
                     <td>{{ tr.test_case_id }}</td>
                     <td>{{ tr.executed_by }}</td>
                     <td>{{ tr.executed_at }}</td>
-                    <td>{{ tr.result }}</td>
+                    <td>{{ tr.result_id }}</td>
                     <td>{{ tr.notes }}</td>
                 </tr>
                 {% endfor %}

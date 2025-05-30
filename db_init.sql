@@ -94,13 +94,13 @@ BEGIN
 END //
 DELIMITER ;
 
--- Trigger: automatické nastavení statusu na "Not Run" při vytvoření nového scénáře
+-- Trigger: automatické nastavení resultu na "Not Run" při vytvoření nového scénáře v test results
 DELIMITER //
-CREATE TRIGGER trg_set_default_status BEFORE INSERT ON test_cases
+CREATE TRIGGER trg_set_default_status BEFORE INSERT ON test_results
 FOR EACH ROW
 BEGIN
-    IF NEW.status_id IS NULL THEN
-        SET NEW.status_id = (SELECT id FROM test_status WHERE name = 'Not Run' LIMIT 1);
+    IF NEW.result_id IS NULL THEN
+        SET NEW.result_id = (SELECT id FROM test_status WHERE name = 'Not Run' LIMIT 1);
     END IF;
 END //
 DELIMITER ;

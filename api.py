@@ -90,7 +90,7 @@ def create_test_result():
     test_result = TestResult(
         test_case_id=data['test_case_id'],
         executed_by=data['executed_by'],
-        result=data['result'],
+        result_id=data['result_id'],
         notes=data.get('notes')
     )
     db.session.add(test_result)
@@ -106,7 +106,7 @@ def list_test_results():
             'test_case_id': r.test_case_id,
             'executed_by': r.executed_by,
             'executed_at': r.executed_at,
-            'result': r.result,
+            'result_id': r.result_id,
             'notes': r.notes
         } for r in results
     ])

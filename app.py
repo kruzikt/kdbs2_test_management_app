@@ -57,18 +57,28 @@ def new_test_case():
         description = request.form['description']
         steps = request.form['steps']
         expected_result = request.form['expected_result']
-        status_id = request.form['status_id']
         created_by = request.form['created_by']
+        # Nastavit status_id na výchozí hodnotu (např. 'Not Run')
+        default_status = TestStatus.query.filter_by(name='Not Run').first()
         testcase = TestCase(
             project_id=project_id,
             title=title,
             description=description,
             steps=steps,
             expected_result=expected_result,
-            status_id=status_id,
+            status_id=default_status.id if default_status else 1,
             created_by=created_by
         )
         db.session.add(testcase)
+        db.session.commit()
+        # Vytvoření záznamu v test_results
+        test_result = TestResult(
+            test_case_id=testcase.id,
+            executed_by=created_by,
+            # result_id není nastavován, trigger v DB nastaví výchozí hodnotu
+            notes='Automatically created with test case.'
+        )
+        db.session.add(test_result)
         db.session.commit()
         flash('Test case created!')
         return redirect(url_for('list_test_cases_page'))
