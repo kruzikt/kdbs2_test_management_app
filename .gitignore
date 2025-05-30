@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+*.sqlite3
+instance/
+.DS_Store
+.vscode/
+# Ignore Python virtual environments
+venv/
+ENV/
+.venv/
+# Ignore OS generated files
+Thumbs.db

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Cases</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Test Cases</h1>
+        <a href="/testcases/new" class="btn btn-primary mb-3">New Test Case</a>
+        <a href="/projects" class="btn btn-secondary mb-3">Projects</a>
+        <a href="/users" class="btn btn-secondary mb-3">Users</a>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Project</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tc in testcases %}
+                <tr>
+                    <td>{{ tc.id }}</td>
+                    <td>{{ tc.project_id }}</td>
+                    <td>{{ tc.title }}</td>
+                    <td>{{ tc.status_id }}</td>
+                    <td>{{ tc.created_by }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
