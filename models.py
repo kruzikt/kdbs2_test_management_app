@@ -11,7 +11,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum('tester', 'manager', 'admin'), default='tester', nullable=False)
     photo = db.Column(db.LargeBinary)  # Přidán sloupec pro fotku uživatele
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -53,3 +52,13 @@ class TestResult(db.Model):
     test_case = db.relationship('TestCase', backref='test_results')
     executor = db.relationship('User')
     result_status = db.relationship('TestStatus')
+
+class TestReport(db.Model):
+    __tablename__ = 'test_report'
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.TIMESTAMP)
+    count_not_run = db.Column(db.Integer)
+    count_in_progress = db.Column(db.Integer)
+    count_blocked = db.Column(db.Integer)
+    count_passed = db.Column(db.Integer)
+    count_failed = db.Column(db.Integer)

@@ -165,6 +165,25 @@ def update_test_result_status(result_id):
         flash('Test result status updated!')
     return redirect(url_for('list_test_results_page'))
 
+@app.route('/testreports')
+def list_test_reports_page():
+    reports = TestReport.query.order_by(TestReport.created_at.desc()).all()
+    return render_template('testreports.html', reports=reports)
+
+@app.route('/testreports/generate', methods=['POST'])
+def generate_test_report():
+    from sqlalchemy.exc import SQLAlchemyError
+    try:
+        with db.engine.begin() as conn:  # begin() will commit/rollback automatically
+            result = conn.execute(text('CALL generate_test_report()'))
+            # For debugging: print result rowcount or any output
+            print('Procedure executed, result:', result.rowcount)
+        flash('Test report generated and all test results reset!')
+    except SQLAlchemyError as e:
+        print('Error calling procedure:', e)
+        flash(f'Error generating test report: {e}', 'danger')
+    return redirect(url_for('list_test_reports_page'))
+
 @app.route('/user_photo/<int:user_id>')
 def user_photo(user_id):
     user = User.query.get_or_404(user_id)

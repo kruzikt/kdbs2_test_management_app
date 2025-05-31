@@ -13,6 +13,10 @@
         <a href="/projects" class="btn btn-secondary mb-3">Projects</a>
         <a href="/testcases" class="btn btn-secondary mb-3">Test Cases</a>
         <a href="/users" class="btn btn-secondary mb-3">Users</a>
+        <a href="/testreports" class="btn btn-secondary mb-3">Test Reports</a>
+        <form method="post" action="/testreports/generate">
+            <button type="submit" class="btn btn-success mb-3">Generate Test Report</button>
+        </form>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -39,10 +43,7 @@
                                     {{ status.name }}</option>
                                 {% endfor %}
                             </select>
-                            {% if tr.result_status and (tr.result_status.name == 'Not Run' or tr.result_status.name ==
-                            'Blocked') %}
                             <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                            {% endif %}
                         </form>
                     </td>
                     <td>{{ tr.notes }}</td>

@@ -60,6 +60,17 @@ CREATE TABLE IF NOT EXISTS test_results (
     FOREIGN KEY (executed_by) REFERENCES users(id)
 );
 
+-- Tabulka: testovací reporty
+CREATE TABLE IF NOT EXISTS test_report (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    count_not_run INT,
+    count_in_progress INT,
+    count_blocked INT,
+    count_passed INT,
+    count_failed INT
+);
+
 -- Pohled: poslední výsledek testu pro každý scénář
 CREATE OR REPLACE VIEW v_last_test_result AS
 SELECT tc.id AS test_case_id, tc.title, tr.result, tr.executed_at
@@ -93,6 +104,29 @@ CREATE PROCEDURE add_test_case(
 BEGIN
     INSERT INTO test_cases (project_id, title, description, steps, expected_result, status_id, created_by)
     VALUES (p_project_id, p_title, p_description, p_steps, p_expected_result, p_status_id, p_created_by);
+END //
+DELIMITER ;
+
+-- Procedura: vygenerování test reportu a reset výsledků
+DELIMITER //
+CREATE PROCEDURE generate_test_report()
+BEGIN
+    DECLARE cnt_not_run INT DEFAULT 0;
+    DECLARE cnt_in_progress INT DEFAULT 0;
+    DECLARE cnt_blocked INT DEFAULT 0;
+    DECLARE cnt_passed INT DEFAULT 0;
+    DECLARE cnt_failed INT DEFAULT 0;
+    -- Spočítat počty výsledků podle statusu
+    SELECT COUNT(*) INTO cnt_not_run FROM test_results WHERE result_id = (SELECT id FROM test_status WHERE name = 'Not Run');
+    SELECT COUNT(*) INTO cnt_in_progress FROM test_results WHERE result_id = (SELECT id FROM test_status WHERE name = 'In Progress');
+    SELECT COUNT(*) INTO cnt_blocked FROM test_results WHERE result_id = (SELECT id FROM test_status WHERE name = 'Blocked');
+    SELECT COUNT(*) INTO cnt_passed FROM test_results WHERE result_id = (SELECT id FROM test_status WHERE name = 'Passed');
+    SELECT COUNT(*) INTO cnt_failed FROM test_results WHERE result_id = (SELECT id FROM test_status WHERE name = 'Failed');
+    -- Vložit nový report
+    INSERT INTO test_report (count_not_run, count_in_progress, count_blocked, count_passed, count_failed)
+    VALUES (cnt_not_run, cnt_in_progress, cnt_blocked, cnt_passed, cnt_failed);
+    -- Resetovat všechny výsledky na Not Run
+    UPDATE test_results SET result_id = (SELECT id FROM test_status WHERE name = 'Not Run');
 END //
 DELIMITER ;
 
