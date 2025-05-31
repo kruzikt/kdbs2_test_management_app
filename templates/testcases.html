@@ -28,8 +28,7 @@
                     <select class="form-control" id="project_id" name="project_id" onchange="this.form.submit()">
                         <option value="">All</option>
                         {% for project in projects %}
-                        <option value="{{ project.id }}" {% if selected_project_id==project.id %}selected{% endif %}>{{
-                            project.name }}</option>
+                        <option value="{{ project.id }}" {% if selected_project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -43,7 +42,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Project</th>
-                    <th>Title</th>
+                    <th>Title &amp; steps</th>
                     <th>Created By</th>
                     <th>Last Result</th>
                     <th>Last Run</th>
@@ -53,9 +52,15 @@
                 {% for tc in testcases %}
                 <tr>
                     <td>{{ tc.id }}</td>
-                    <td>{{ tc.project_id }}</td>
-                    <td>{{ tc.title }}</td>
-                    <td>{{ tc.created_by }}</td>
+                    <td>{{ tc.project.name if tc.project else tc.project_id }}</td>
+                    <td><strong>{{ tc.title }}</strong><br>
+                        <ol class="mb-0">
+                        {% for step in tc.steps.split('\n') if step.strip() %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                        </ol>
+                    </td>
+                    <td>{{ tc.creator.username if tc.creator else tc.created_by }}</td>
                     <td>{% if last_results[tc.id] %}{{ last_results[tc.id]['result'] }}{% else %}-{% endif %}</td>
                     <td>{% if last_results[tc.id] %}{{ last_results[tc.id]['executed_at'] }}{% else %}-{% endif %}</td>
                 </tr>

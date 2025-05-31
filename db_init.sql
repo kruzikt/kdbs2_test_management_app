@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS projects (
     description TEXT,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    configuration JSON NULL,
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 

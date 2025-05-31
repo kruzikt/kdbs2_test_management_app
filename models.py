@@ -20,6 +20,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
+    configuration = db.Column(db.JSON)  # Přidán sloupec pro JSON konfiguraci
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     creator = db.relationship('User', backref='projects')

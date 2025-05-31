@@ -10,20 +10,30 @@
 <body>
     <div class="container mt-4">
         <h1>New Project</h1>
+        {% if config_error %}
+        <div class="alert alert-danger">{{ config_error }}</div>
+        {% endif %}
         <form method="post">
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <input type="text" class="form-control" id="name" name="name" required value="{{ name|default('') }}">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description"></textarea>
+                <textarea class="form-control" id="description"
+                    name="description">{{ description|default('') }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="configuration" class="form-label">Project Configuration (JSON)</label>
+                <textarea class="form-control" id="configuration" name="configuration" rows="6"
+                    placeholder='{"environments": {"develop": {"url": "https://develop.test-app.cz/", "username": "admin", "password": "123456"}}}'>{{ configuration|default('') }}</textarea>
             </div>
             <div class="mb-3">
                 <label for="created_by" class="form-label">Created By (User)</label>
                 <select class="form-control" id="created_by" name="created_by" required>
                     {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    <option value="{{ user.id }}" {% if created_by|default('')|string==user.id|string %}selected{% endif
+                        %}>{{ user.username }}</option>
                     {% endfor %}
                 </select>
             </div>

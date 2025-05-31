@@ -43,7 +43,18 @@ def new_project():
         name = request.form['name']
         description = request.form['description']
         created_by = request.form['created_by']
+        config = request.form.get('configuration')
+        config_error = None
         project = Project(name=name, description=description, created_by=created_by)
+        if config:
+            import json
+            try:
+                project.configuration = json.loads(config)
+            except Exception:
+                config_error = 'Project configuration is not valid JSON.'
+        if config_error:
+            users = User.query.all()
+            return render_template('new_project.html', users=users, config_error=config_error, name=name, description=description, created_by=created_by, configuration=config)
         db.session.add(project)
         db.session.commit()
         flash('Project created!')
@@ -65,15 +76,14 @@ def list_test_cases_page():
         if project_id:
             ids = tuple(tc.id for tc in testcases)
             if ids:
-                placeholders = ','.join(['%s'] * len(ids))
+                placeholders = ','.join([str(i) for i in ids])
                 sql = f'SELECT * FROM v_last_test_result WHERE test_case_id IN ({placeholders})'
-                result = conn.execute(text(sql), ids)
+                result = conn.execute(text(sql))
             else:
                 result = []
         else:
             result = conn.execute(text('SELECT * FROM v_last_test_result'))
         for row in result:
-            # SQLAlchemy row is tuple-like, not dict-like, so use index or ._mapping
             row_map = row._mapping if hasattr(row, '_mapping') else row
             last_results[row_map['test_case_id']] = {'result': row_map['result'], 'executed_at': row_map['executed_at']}
     return render_template('testcases.html', testcases=testcases, projects=projects, selected_project_id=project_id, last_results=last_results)

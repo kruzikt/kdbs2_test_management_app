@@ -26,6 +26,7 @@
                     <th>Description</th>
                     <th>Created By</th>
                     <th>Tests Count</th>
+                    <th>Project configuration</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,6 +37,7 @@
                     <td>{{ project.description }}</td>
                     <td>{{ project.created_by }}</td>
                     <td>{{ test_counts[project.id] }}</td>
+                    <td><pre class="mb-0">{{ project.configuration | tojson(indent=2) if project.configuration else '' }}</pre></td>
                 </tr>
                 {% endfor %}
             </tbody>
