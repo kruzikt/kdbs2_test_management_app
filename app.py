@@ -136,10 +136,9 @@ def new_user():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        password_hash = request.form['password_hash']
         role = request.form['role']
         photo = request.files.get('photo')
-        user = User(username=username, email=email, password_hash=password_hash, role=role)
+        user = User(username=username, email=email, role=role)
         if photo and photo.filename:
             user.photo = photo.read()
         db.session.add(user)
