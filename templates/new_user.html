@@ -10,7 +10,7 @@
 <body>
     <div class="container mt-4">
         <h1>New User</h1>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -30,6 +30,10 @@
                     <option value="manager">Manager</option>
                     <option value="admin">Admin</option>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="photo" class="form-label">User Photo</label>
+                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
             </div>
             <button type="submit" class="btn btn-success">Create</button>
             <a href="/users" class="btn btn-secondary">Back</a>

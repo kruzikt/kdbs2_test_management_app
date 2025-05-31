@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, Response, abort
 import os
 from api import api
 from extensions import db, migrate
@@ -138,7 +138,10 @@ def new_user():
         email = request.form['email']
         password_hash = request.form['password_hash']
         role = request.form['role']
+        photo = request.files.get('photo')
         user = User(username=username, email=email, password_hash=password_hash, role=role)
+        if photo and photo.filename:
+            user.photo = photo.read()
         db.session.add(user)
         db.session.commit()
         flash('User created!')
@@ -149,6 +152,14 @@ def new_user():
 def list_test_results_page():
     testresults = TestResult.query.all()
     return render_template('testresults.html', testresults=testresults)
+
+@app.route('/user_photo/<int:user_id>')
+def user_photo(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.photo:
+        return Response(user.photo, mimetype='image/jpeg')
+    else:
+        abort(404)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
