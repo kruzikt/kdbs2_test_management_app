@@ -37,7 +37,8 @@
                     <td>{{ user.role }}</td>
                     <td>
                         {% if user.photo %}
-                        <img src="{{ url_for('user_photo', user_id=user.id) }}" alt="User Photo" style="max-width:60px; max-height:60px;">
+                        <img src="{{ url_for('user_photo', user_id=user.id) }}" alt="User Photo"
+                            style="max-width:60px; max-height:60px;">
                         {% endif %}
                     </td>
                 </tr>

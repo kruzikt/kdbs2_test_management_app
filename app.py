@@ -148,10 +148,23 @@ def new_user():
         return redirect(url_for('list_users_page'))
     return render_template('new_user.html')
 
-@app.route('/testresults')
+@app.route('/testresults', methods=['GET', 'POST'])
 def list_test_results_page():
     testresults = TestResult.query.all()
-    return render_template('testresults.html', testresults=testresults)
+    statuses = TestStatus.query.all()
+    return render_template('testresults.html', testresults=testresults, statuses=statuses)
+
+@app.route('/testresults/update/<int:result_id>', methods=['POST'])
+def update_test_result_status(result_id):
+    from datetime import datetime
+    test_result = TestResult.query.get_or_404(result_id)
+    new_status_id = request.form.get('result_id')
+    if new_status_id:
+        test_result.result_id = int(new_status_id)
+        test_result.executed_at = datetime.utcnow()  # aktualizace data změny výsledku
+        db.session.commit()
+        flash('Test result status updated!')
+    return redirect(url_for('list_test_results_page'))
 
 @app.route('/user_photo/<int:user_id>')
 def user_photo(user_id):

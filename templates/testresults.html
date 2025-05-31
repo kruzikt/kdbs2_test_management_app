@@ -16,22 +16,35 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Test Case ID</th>
-                    <th>Executed By (User ID)</th>
+                    <th>Test Case</th>
+                    <th>Executed By</th>
                     <th>Executed At</th>
-                    <th>Status</th>
+                    <th>Result</th>
                     <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
                 {% for tr in testresults %}
                 <tr>
-                    <td>{{ tr.id }}</td>
-                    <td>{{ tr.test_case_id }}</td>
-                    <td>{{ tr.executed_by }}</td>
+                    <td>{{ tr.test_case.title if tr.test_case else tr.test_case_id }}</td>
+                    <td>{{ tr.executor.username if tr.executor else tr.executed_by }}</td>
                     <td>{{ tr.executed_at }}</td>
-                    <td>{{ tr.result_id }}</td>
+                    <td>
+                        <form method="post" action="/testresults/update/{{ tr.id }}"
+                            class="d-flex align-items-center mb-0">
+                            <select name="result_id" class="form-select form-select-sm me-2"
+                                style="width:auto;display:inline-block;">
+                                {% for status in statuses %}
+                                <option value="{{ status.id }}" {% if tr.result_id==status.id %}selected{% endif %}>
+                                    {{ status.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if tr.result_status and (tr.result_status.name == 'Not Run' or tr.result_status.name ==
+                            'Blocked') %}
+                            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                            {% endif %}
+                        </form>
+                    </td>
                     <td>{{ tr.notes }}</td>
                 </tr>
                 {% endfor %}
