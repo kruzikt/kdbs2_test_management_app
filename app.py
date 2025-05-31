@@ -113,7 +113,7 @@ def new_test_case():
         # Vytvoření záznamu v test_results
         test_result = TestResult(
             test_case_id=testcase.id,
-            executed_by=created_by,
+            # executed_by a executed_at necháváme prázdné
             # result_id není nastavován, trigger v DB nastaví výchozí hodnotu
             notes='Automatically created with test case.'
         )
@@ -149,20 +149,31 @@ def new_user():
 
 @app.route('/testresults', methods=['GET', 'POST'])
 def list_test_results_page():
-    testresults = TestResult.query.all()
+    project_id = request.args.get('project_id', type=int)
+    projects = Project.query.all()
+    if project_id:
+        testresults = TestResult.query.join(TestCase).filter(TestCase.project_id == project_id).all()
+    else:
+        testresults = TestResult.query.all()
     statuses = TestStatus.query.all()
-    return render_template('testresults.html', testresults=testresults, statuses=statuses)
+    users = User.query.all()
+    return render_template('testresults.html', testresults=testresults, statuses=statuses, users=users, projects=projects, selected_project_id=project_id)
 
 @app.route('/testresults/update/<int:result_id>', methods=['POST'])
 def update_test_result_status(result_id):
     from datetime import datetime
     test_result = TestResult.query.get_or_404(result_id)
     new_status_id = request.form.get('result_id')
+    new_executor_id = request.form.get('executed_by')
     if new_status_id:
         test_result.result_id = int(new_status_id)
-        test_result.executed_at = datetime.utcnow()  # aktualizace data změny výsledku
-        db.session.commit()
-        flash('Test result status updated!')
+    if new_executor_id:
+        test_result.executed_by = int(new_executor_id)
+    else:
+        test_result.executed_by = None
+    test_result.executed_at = datetime.utcnow()  # aktualizace data změny výsledku
+    db.session.commit()
+    flash('Test result status updated!')
     return redirect(url_for('list_test_results_page'))
 
 @app.route('/testreports')

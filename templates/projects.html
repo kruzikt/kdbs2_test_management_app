@@ -35,7 +35,7 @@
                     <td>{{ project.id }}</td>
                     <td>{{ project.name }}</td>
                     <td>{{ project.description }}</td>
-                    <td>{{ project.created_by }}</td>
+                    <td>{{ project.creator.username if project.creator else project.created_by }}</td>
                     <td>{{ test_counts[project.id] }}</td>
                     <td>
                         <pre

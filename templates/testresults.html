@@ -17,19 +17,41 @@
         <form method="post" action="/testreports/generate">
             <button type="submit" class="btn btn-success mb-3">Generate Test Report</button>
         </form>
+
+        <form method="get" class="mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label for="project_id" class="form-label mb-0">Project:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-control" id="project_id" name="project_id" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        {% for project in projects %}
+                        <option value="{{ project.id }}" {% if selected_project_id==project.id %}selected{% endif %}>{{
+                            project.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>Project</th>
                     <th>Test Case</th>
                     <th>Executed By</th>
                     <th>Executed At</th>
                     <th>Result</th>
-                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
                 {% for tr in testresults %}
                 <tr>
+                    <td>{{ tr.test_case.project.name if tr.test_case and tr.test_case.project else '-' }}</td>
                     <td>{{ tr.test_case.title if tr.test_case else tr.test_case_id }}</td>
                     <td>{{ tr.executor.username if tr.executor else tr.executed_by }}</td>
                     <td>{{ tr.executed_at }}</td>
@@ -43,10 +65,17 @@
                                     {{ status.name }}</option>
                                 {% endfor %}
                             </select>
+                            <select name="executed_by" class="form-select form-select-sm me-2"
+                                style="width:auto;display:inline-block;">
+                                <option value="">-- Select User --</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}" {% if tr.executor and tr.executor.id==user.id %}selected{%
+                                    endif %}>{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
                             <button type="submit" class="btn btn-sm btn-primary">Save</button>
                         </form>
                     </td>
-                    <td>{{ tr.notes }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

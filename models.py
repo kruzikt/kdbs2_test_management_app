@@ -45,8 +45,8 @@ class TestResult(db.Model):
     __tablename__ = 'test_results'
     id = db.Column(db.Integer, primary_key=True)
     test_case_id = db.Column(db.Integer, db.ForeignKey('test_cases.id'), nullable=False)
-    executed_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    executed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    executed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    executed_at = db.Column(db.DateTime, nullable=True)  # Remove default, allow NULL
     result_id = db.Column(db.Integer, db.ForeignKey('test_status.id'), nullable=False)
     notes = db.Column(db.Text)
     test_case = db.relationship('TestCase', backref='test_results')
